@@ -1,5 +1,4 @@
 "use client"
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,8 +7,30 @@ import { Search, Plus } from 'lucide-react'
 import Image from "next/image"
 import { ProductsTable } from "./components/products-table"
 import { Badge } from "@/components/ui/badge"
+import axios from 'axios'
+import { useState } from "react"
 
 export default function NewSaleInvoice() {
+    const [invoice, setinvoice] = useState("");
+    const [gstin, setgstin] = useState("27AADCB2230M1Z2")
+    const handleNameChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+      setinvoice(e.target.value);
+    };
+    const handlegtinchange = (e:React.ChangeEvent<HTMLInputElement>) => {
+     setgstin(e.target.value);
+    };
+  const handleSubmit = async () => {
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtZmF3YWRraGFuMDVAZ21haWwuY29tIiwiaWF0IjoxNzM2NTE0Nzg5LCJleHAiOjE3MzY2MDExODl9.EgzaThAkTFPZCuLsMsC9Aw-MPXq8TfY3EKUo-EOg3Bg";  // Replace with actual token
+    const response = await axios.post(
+      "http://localhost:5000/api/sales/create", 
+      invoice,
+      {
+        headers: {
+          'Authorization': Bearer ${token}  // Send the JWT token
+        }
+      }
+    );
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -21,7 +42,7 @@ export default function NewSaleInvoice() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Invoice No</Label>
-                <Input defaultValue="INV/2024-001" />
+                <Input value={invoice}  onChange={handleNameChange}/>
               </div>
               <div className="space-y-2">
                 <Label>Invoice Date</Label>
@@ -29,7 +50,7 @@ export default function NewSaleInvoice() {
               </div>
               <div className="space-y-2">
                 <Label>GSTIN</Label>
-                <Input defaultValue="27AADCB2230M1Z2" />
+                <Input  value={gstin} onChange={handlegtinchange} />
               </div>
               <div className="space-y-2">
                 <Label>State</Label>
@@ -223,7 +244,7 @@ export default function NewSaleInvoice() {
             <Button variant="outline">
               Save as Draft
             </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
               Create Invoice
             </Button>
             <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
@@ -237,7 +258,6 @@ export default function NewSaleInvoice() {
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </div>
+  )
 }
-
